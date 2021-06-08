@@ -10,8 +10,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-swaggerDocument = require("./swagger.json");
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerDocument = require("./swagger.json");
+const DisableTryItOutPlugin = function () {
+	return {
+		statePlugins: {
+			spec: {
+				wrapSelectors: {
+					allowTryItOutFor: () => () => false,
+				},
+			},
+		},
+	};
+};
+const options = {
+	swaggerOptions: {
+		plugins: [ DisableTryItOutPlugin ],
+	},
+};
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 // Handlebars middleware
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
@@ -30,13 +46,13 @@ app.get("/", async (req, res) => {
 
 // Users
 // Get: All users data
-app.get("/api/users", async (req, res) => {
+app.get("/users", async (req, res) => {
 	const users = await knex("users");
 	res.send(users);
 });
 
 // Get: Individual user data
-app.get("/api/users/:id", async (req, res) => {
+app.get("/users/:id", async (req, res) => {
 	const users = await knex("users");
 	const target = users.filter((user) => user.id === parseInt(req.params.id));
 	if (target.length === 0) {
@@ -52,16 +68,15 @@ app.listen(port, () => {
 });
 
 // Post: Create a user data
-app.post("/api/users", async (req, res) => {
+app.post("/users", async (req, res) => {
 	await knex("users").insert({
 		name: req.body.name,
 		license: req.body.license,
 	});
-	const users = await knex("users");
-	res.send(users);
+	res.redirect("/");
 });
 // Put: Update a user data
-app.put("/api/users/:id", async (req, res) => {
+app.put("/users/:id", async (req, res) => {
 	const users = await knex("users");
 	const target = users.filter((user) => user.id === parseInt(req.params.id));
 	if (target.length === 0) {
@@ -73,10 +88,11 @@ app.put("/api/users/:id", async (req, res) => {
 		gender: req.body.gender,
 		license_type: req.body.license_type,
 	});
-	res.send(users);
+	res.redirect("/");
 });
 // Delete: Delete a user data
-app.delete("/api/users/:id", async (req, res) => {
+app.delete("/users/:id", async (req, res) => {
+	console.log(req.body);
 	const users = await knex("users");
 	const target = users.filter((user) => user.id === parseInt(req.params.id));
 	if (target.length === 0) {
@@ -88,12 +104,12 @@ app.delete("/api/users/:id", async (req, res) => {
 });
 // Logs
 // Get: All log data
-app.get("/api/logs", async (req, res) => {
+app.get("/logs", async (req, res) => {
 	const logs = await knex("logs");
 	res.send(logs);
 });
 // Get: All log data for a user
-app.get("/api/logs/:id", async (req, res) => {
+app.get("/logs/:id", async (req, res) => {
 	const logs = await knex("logs");
 	const target = logs.filter((log) => log.id === parseInt(req.params.id));
 	if (target.length === 0) {
@@ -103,7 +119,7 @@ app.get("/api/logs/:id", async (req, res) => {
 	res.send(target);
 });
 // Post: Create a log data
-app.post("/api/logs", async (req, res) => {
+app.post("/logs", async (req, res) => {
 	await knex("logs").insert({
 		date_time: req.body.date_time,
 		buddy_name: req.body.buddy_name,
@@ -118,7 +134,7 @@ app.post("/api/logs", async (req, res) => {
 });
 
 // Update: Update a log data
-app.put("/api/logs/:id", async (req, res) => {
+app.put("/logs/:id", async (req, res) => {
 	const logs = await knex("logs");
 	const target = logs.filter((log) => log.id === parseInt(req.params.id));
 	if (target.length === 0) {
@@ -138,7 +154,7 @@ app.put("/api/logs/:id", async (req, res) => {
 });
 
 // Delete: Delete a log
-app.delete("/api/logs/:id", async (req, res) => {
+app.delete("/logs/:id", async (req, res) => {
 	console.log(req.body);
 	const logs = await knex("logs");
 	const target = logs.filter((log) => log.id === parseInt(req.params.id));

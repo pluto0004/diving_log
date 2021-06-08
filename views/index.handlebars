@@ -21,6 +21,17 @@
 
 </form>
 
+<h2 class="mb-1">Delete User</h2>
+<form action="/api/users/:id" method="DELETE" class="mb-4" >
+    <div class="form-group">
+        <label for="name">Id</label>
+        <input type="number" name='id' class="form-control">
+    </div>
+    <br>
+    <input type="submit" value="Delete user" class="btn btn-primary btn-block">
+
+</form>
+
 
 <h2 class="mb-1">Add logs</h2>
 <form action='/api/logs' method="POST" class="mb-4">

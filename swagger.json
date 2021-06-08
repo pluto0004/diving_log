@@ -2,8 +2,8 @@
 	"swagger": "2.0",
 	"info": {
 		"version": "1.0.0",
-		"title": "My User Project CRUD",
-		"description": "My User Project Application API",
+		"title": "Diving Logger CRUD",
+		"description": "Diving Logger API",
 		"license": {
 			"name": "MIT",
 			"url": "https://opensource.org/licenses/MIT"
@@ -15,6 +15,10 @@
 		{
 			"name": "Users",
 			"description": "API for users in the system"
+		},
+		{
+			"name": "Logs",
+			"description": "API for logs in the system"
 		}
 	],
 	"schemes": [ "http" ],
@@ -30,6 +34,223 @@
 						"description": "OK",
 						"schema": {
 							"$ref": "#/definitions/Users"
+						},
+						"examples": {
+							"application/json": [
+								{
+									"id": 1,
+									"name": "Bob",
+									"license": "RD"
+								},
+								{
+									"id": 2,
+									"name": "Bob",
+									"license": "RD"
+								},
+								{
+									"id": 3,
+									"name": "Bob",
+									"license": "RD"
+								}
+							]
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [ "Users" ],
+				"summary": "Create new user in system",
+				"parameters": [
+					{
+						"name": "user",
+						"in": "body",
+						"description": "User that we want to create",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+
+				"responses": {
+					"200": {
+						"description": "OK",
+
+						"examples": {
+							"application/json": {
+								"name": "Alice",
+								"license": "AOWD"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"tags": [ "Users" ],
+				"summary": "Get a user in system",
+				"parameters": [
+					{
+						"required": true,
+						"name": "id",
+						"in": "body",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+
+						"examples": {
+							"application/json": {
+								"id": 3,
+								"name": "Maria",
+								"license": "RD"
+							}
+						}
+					}
+				}
+			},
+
+			"put": {
+				"tags": [ "Users" ],
+				"summary": "Update a user in system",
+				"description": "User id that you want to update",
+				"parameters": [
+					{
+						"required": true,
+						"name": "id",
+						"in": "body",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"examples": {
+							"application/json": {
+								"id": 3,
+								"name": "Maria",
+								"license": "RD"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [ "Users" ],
+				"summary": "Delete a user in system",
+				"description": "User id that you want to delete",
+				"parameters": [
+					{
+						"required": true,
+						"name": "id",
+						"in": "path",
+						"type": "integer"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"examples": {
+							"application/json": {
+								"msg": "A user was deleted",
+								"deletedUser": {
+									"id": 3,
+									"name": "Maria",
+									"license": "RD"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/logs": {
+			"get": {
+				"tags": [ "Logs" ],
+				"summary": "Get all logs in system",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [ "Logs" ],
+				"summary": "Create new log in system",
+				"parameters": [
+					{
+						"description": "Log that you want to create"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					}
+				}
+			}
+		},
+		"/logs/{id}": {
+			"get": {
+				"tags": [ "Logs" ],
+				"summary": "Get a log in system",
+				"description": "User id that you want to get",
+				"parameters": [
+					{
+						"required": true,
+						"name": "id",
+						"in": "path",
+						"type": "integer"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [ "Logs" ],
+				"summary": "Update a log in system",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Users"
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [ "Logs" ],
+				"summary": "Delete a log in system",
+				"description": "Log id that you want to delete",
+				"parameters": [
+					{
+						"required": true,
+						"in": "path",
+						"type": "integer"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"schema": {
+							"$ref": "#/definitions/Users"
 						}
 					}
 				}
@@ -38,43 +259,36 @@
 	},
 	"definitions": {
 		"User": {
-			"required": [ "name", "_id", "companies" ],
+			"required": [ "name", "license" ],
 			"properties": {
 				"_id": {
 					"type": "integer",
 					"uniqueItems": true
 				},
-				"isPublic": {
-					"type": "boolean"
-				},
 				"name": {
+					"type": "string",
+					"notNullable": true
+				},
+				"license": {
 					"type": "string"
-				},
-				"books": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"name": {
-								"type": "string"
-							},
-							"amount": {
-								"type": "number"
-							}
-						}
-					}
-				},
-				"companies": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
 				}
 			}
 		},
-		"Users": {
-			"type": "array",
-			"$ref": "#/definitions/User"
+		"Log": {
+			"required": [ "name", "license" ],
+			"properties": {
+				"_id": {
+					"type": "integer",
+					"uniqueItems": true
+				},
+				"name": {
+					"type": "string",
+					"notNullable": true
+				},
+				"license": {
+					"type": "string"
+				}
+			}
 		}
 	}
 }
